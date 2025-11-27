@@ -21,6 +21,11 @@ class FeatureResult:
 
 	@property
 	def keypoint_count(self) -> int:
+		"""Get the number of keypoints.
+		
+		Returns:
+			int: The count of keypoints stored in this FeatureResult instance.
+		"""
 		return len(self.keypoints)
 
 	@property
@@ -35,6 +40,7 @@ def get_detector(
 	"""Construct and return a configured OpenCV feature detector."""
 
 	name_lower = name.lower()
+	
 	if name_lower == "orb":
 		default_params = {
 			"nfeatures": 500,
@@ -49,9 +55,19 @@ def get_detector(
 		}
 		default_params.update(params)
 		return cv2.ORB_create(**default_params)  # type: ignore[attr-defined]
+	
+	if name_lower == "sift":
+		default_params = {
+			"nfeatures": 0,            # 0 = detect all features
+			"nOctaveLayers": 3,
+			"contrastThreshold": 0.04,
+			"edgeThreshold": 10,
+			"sigma": 1.6,
+		}
+		default_params.update(params)
+		return cv2.SIFT_create(**default_params)
 
 	raise ValueError(f"Unsupported detector: {name}")
-
 
 def extract_features(
 	image: np.ndarray,

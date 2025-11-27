@@ -15,7 +15,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
 	sys.path.append(str(PROJECT_ROOT))
 
-from src import feature_extraction, feature_matching, image_io, preprocessing, ui, visualization
+from src import feature_extraction, feature_matching, image_io, preprocessing, ui, visualization, morphology, segmentation
 
 
 @dataclass
@@ -81,16 +81,24 @@ def _select_image(images: List[LoadedImage], label: str, index: int = 0) -> Opti
 
 
 def _extract_features(image: np.ndarray, settings: ui.DetectorSettings) -> feature_extraction.FeatureResult:
-	"""Run ORB feature extraction with the current detector configuration."""
-	detector = feature_extraction.get_detector(
-		"orb",
-		nfeatures=settings.nfeatures,
-		scaleFactor=settings.scale_factor,
-		nlevels=settings.nlevels,
-		edgeThreshold=settings.edge_threshold,
-		fastThreshold=settings.fast_threshold,
-		patchSize=settings.patch_size,
-	)
+	"""Run feature extraction with the selected detector configuration."""
+	if settings.detector_type == "orb":
+		detector = feature_extraction.get_detector("orb",
+			nfeatures=settings.orb.nfeatures,
+			scaleFactor=settings.orb.scale_factor,
+			nlevels=settings.orb.nlevels,
+			edgeThreshold=settings.orb.edge_threshold,
+			fastThreshold=settings.orb.fast_threshold,
+			patchSize=settings.orb.patch_size,
+		)
+	else:  # sift
+		detector = feature_extraction.get_detector("sift",
+			nfeatures=settings.sift.nfeatures,
+			nOctaveLayers=settings.sift.n_octave_layers,
+			contrastThreshold=settings.sift.contrast_threshold,
+			edgeThreshold=settings.sift.edge_threshold,
+			sigma=settings.sift.sigma,
+		)
 	return feature_extraction.extract_features(image, detector)
 
 
@@ -100,7 +108,7 @@ def main() -> None:
 	st.title("Medical Image Feature Extraction Demo")
 	st.write("Upload medical PNG slices to explore feature detection, matching, and differential analysis.")
 
-	detector_settings, preprocessing_settings, matching_settings = ui.render_sidebar()
+	detector_settings, preprocessing_settings, morphology_settings, segmentation_settings, matching_settings = ui.render_sidebar()
 
 	uploaded_files = st.file_uploader("Upload PNG slices", type=["png"], accept_multiple_files=True)
 
@@ -126,7 +134,7 @@ def main() -> None:
 
 	processed_primary = _preprocess_image(primary.image, preprocessing_settings)
 
-	tabs = st.tabs(["Preview", "Feature Extraction", "Differential Comparison"])
+	tabs = st.tabs(["Preview", "Preprocessing", "Morphology", "Segmentation", "Feature Extraction", "Differential Comparison"])
 
 	with tabs[0]:
 		st.subheader("Original Slice")
