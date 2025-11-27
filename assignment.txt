@@ -1,2 +1,4 @@
+Assignment 2 - Features, Patterns and Tracking. 
+Task 1.
 Create an application (GUI or WEBapp or WEB site) where you show how feature extraction works. 
 Use medical images and make it possible to extract features from videos and from differential frames of videos to show how feature matching could works. 
