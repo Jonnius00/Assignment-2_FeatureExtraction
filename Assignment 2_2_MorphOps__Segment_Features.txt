@@ -1,0 +1,13 @@
+Assignment 2 - Features, Patterns and Tracking. 
+Task 2.
+Create an GUI application where 
+- morphological operations, 
+- segmentation algorithms and 
+- feature extraction and matching 
+is used to detect region of interests. 
+
+Give the user possibilities for interaction 
+and include all morphological operations discussed in the lecture 
+and at least 2 different features detectors to SIFT. 
+
+The GUI should be able to visualize the results. 
