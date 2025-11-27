@@ -10,7 +10,15 @@ import numpy as np
 
 
 def to_rgb(image: np.ndarray) -> np.ndarray:
-    """Ensure the image is RGB for display."""
+    """Ensure the image is RGB for display.
+     using to_rgb() is still a good practice because:
+    - Consistency: It ensures all images are in the same color format, which is important for display and further processing.
+    - Compatibility: Some downstream functions or libraries may expect images in RGB format.
+    - Performance: RGB images are typically smaller in size than BGR images, which can lead to faster processing.
+
+    Args:
+        image: Input image in BGR or grayscale format.
+    """
 
     if image.ndim == 2:
         return cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)

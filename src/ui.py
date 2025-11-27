@@ -87,7 +87,7 @@ def render_sidebar() -> tuple[DetectorSettings, PreprocessingSettings, Morpholog
 		kernel_size=kernel_size,
 		sigma=sigma,
 	)
-	
+	st.sidebar.markdown("---")
 	st.sidebar.subheader("Morphology Settings")
 	threshold = st.sidebar.slider("Binarization Threshold", min_value=0, max_value=255, value=127)
 	threshold_method = st.sidebar.selectbox("Threshold Method", ("binary", "binary_inv", "otsu"))
@@ -104,7 +104,7 @@ def render_sidebar() -> tuple[DetectorSettings, PreprocessingSettings, Morpholog
 	  kernel_size=kernel_size,
 	  iterations=iterations,
 	)
-	
+	st.sidebar.divider()
 	st.sidebar.subheader("Segmentation Settings")
 	method = st.sidebar.selectbox("Segmentation Method", ("otsu",))
 	min_contour_area = st.sidebar.slider("Min Contour Area", min_value=10, max_value=1000, value=100, step=10)
