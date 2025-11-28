@@ -21,7 +21,7 @@ This application combines **morphological operations**, **segmentation algorithm
 | **🔧 Preprocessing Pipeline** | Normalization, smoothing (Gaussian, Median, Bilateral) |
 | **🔲 Morphological Operations** | Binarization, erosion, dilation, opening, closing, gradient edge detection |
 | **📊 Segmentation** | Otsu's automatic thresholding + contour detection for ROI extraction |
-| **🔍 Feature Detection** | ORB (fast, free) and SIFT (scale-invariant) detector support |
+| **🔍 Feature Detection** | ORB (fast, free), SIFT (scale-invariant), and Harris (corner-based) detectors |
 | **🔗 Feature Matching** | Descriptor matching with Lowe's ratio test for differential analysis |
 | **📈 Visualization** | Real-time overlays, histograms, contour maps, and match diagrams |
 
@@ -34,7 +34,7 @@ This application combines **morphological operations**, **segmentation algorithm
 - **pip** package manager
 - Virtual environment (recommended: `venv` or `conda`)
 
-### Installation (5 minutes)
+### Installation
 
 ```powershell
 # Clone the repository
@@ -93,7 +93,7 @@ streamlit run src/main.py
 - Shows ROI count and area statistics (min, max, mean)
 
 #### 5️⃣ **Feature Extraction Tab**
-- Select detector: **ORB** (fast, royalty-free) or **SIFT** (scale-invariant)
+- Select detector: **ORB** (fast, royalty-free), **SIFT** (scale-invariant), or **Harris** (corner-based)
 - Configure detector parameters via sidebar sliders
 - View detected keypoints overlaid on image
 - Monitor keypoint count and descriptor dimensions
@@ -201,7 +201,7 @@ pytest --cov=src tests/
 - ✅ Preprocessing (normalization, smoothing, differencing)
 - ✅ Morphology (all operations, kernel creation)
 - ✅ Segmentation (Otsu, contour detection, filtering)
-- ✅ Feature extraction (ORB & SIFT)
+- ✅ Feature extraction (ORB, SIFT, & Harris)
 - ✅ Feature matching (descriptor matching, ratio filtering)
 
 ---
@@ -253,7 +253,7 @@ pytest>=7.4.0
 
 ---
 
-## 📖 Documentation
+## 📖 Documentation ( docs/ folder )
 
 - **[Developer Manual](developer_manual.md)** — In-depth guide for developers:
   - Module architecture
@@ -294,7 +294,8 @@ Perfect for:
 ## 🚀 Future Enhancements
 
 **Planned Extensions:**
-- [ ] **AKAZE detector** — Patent-free alternative to SIFT
+- [ ] **Feature detection alternatives** — implement Harris Corner
+Detection or FAST (Features from Accelerated Segment Test).
 - [ ] **Video support** — Process video frames instead of static images
 - [ ] **Watershed segmentation** — Advanced method for overlapping objects
 - [ ] **Result export** — CSV descriptors, annotated images, ROI coordinates
@@ -336,8 +337,8 @@ Built with:
 
 ## 📞 Support & Questions
 
-For implementation details, see the **developer_manual.md**.  
-For assignment requirements, see the **roi_implementation_plan.md**.  
+For implementation details of Task 1, see the **docs/developer_manual.md**.  
+For assignment requirements of Task 2, see the **docs/roi_implementation_plan.md**.  
 For questions, refer to inline code comments or the official documentation links provided.
 
 **Happy analyzing! 🔬**

@@ -207,7 +207,8 @@ streamlit run src/main.py
 
 ## Notes
 
-- **AKAZE detector**: Postponed. Can be added later if teacher requires (same pattern as SIFT).
+- **Alternative feature detector**: currently postponed. Harris Corner
+Detection or FAST (Features from Accelerated Segment Test) can be added later if requires (same pattern as SIFT).
 - **Top-hat / Black-hat**: Postponed. Add to morphology.py if needed.
 - **Watershed segmentation**: Postponed. More complex, add if required.
 

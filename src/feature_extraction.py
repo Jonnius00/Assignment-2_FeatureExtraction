@@ -12,6 +12,77 @@ import numpy as np
 DetectorName = str  # extendable list of detector identifiers
 
 
+class _HarrisDetector:
+	"""Wrapper for Harris corner detection that implements cv2.Feature2D interface."""
+	
+	def __init__(self, blockSize: int = 2, ksize: int = 3, k: float = 0.04, threshold: float = 0.01):
+		"""Initialize Harris corner detector with parameters.
+		
+		Args:
+			blockSize: Neighborhood size (default: 2)
+			ksize: Sobel kernel size (default: 3, must be odd)
+			k: Harris corner response parameter (default: 0.04)
+			threshold: Corner strength threshold (default: 0.01)
+		"""
+		self.blockSize = blockSize
+		self.ksize = ksize
+		self.k = k
+		self.threshold = threshold
+	
+	def detectAndCompute(
+		self,
+		image: np.ndarray,
+		mask: Optional[np.ndarray] = None,
+	) -> tuple[list[cv2.KeyPoint], Optional[np.ndarray]]:
+		"""Detect corners and return as keypoints.
+		
+		Args:
+			image: Input image (grayscale or BGR)
+			mask: Optional mask (not used for Harris)
+		
+		Returns:
+			Tuple of (keypoints, descriptors) where descriptors are corner response strengths
+		"""
+		# Convert to grayscale if needed
+		if image.ndim == 3:
+			gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		else:
+			gray = image
+		
+		# Compute Harris corner response
+		corners = cv2.cornerHarris(gray, self.blockSize, self.ksize, self.k)
+		
+		# Normalize corner response to 0-255 range
+		corners_norm = cv2.normalize(corners, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+		
+		# Threshold to get corner locations
+		threshold_val = int(self.threshold * 255)
+		corner_mask = corners_norm > threshold_val
+		
+		# Get corner coordinates
+		corner_coords = np.column_stack(np.where(corner_mask))
+		
+		# Convert to keypoints
+		keypoints = []
+		responses = []
+		
+		for y, x in corner_coords:
+			kp = cv2.KeyPoint(float(x), float(y), 5.0)
+			kp.response = float(corners[y, x])
+			keypoints.append(kp)
+			responses.append(corners_norm[y, x])
+		
+		# Sort by response strength (descending)
+		if keypoints:
+			sorted_indices = np.argsort(-np.array(responses))
+			keypoints = [keypoints[i] for i in sorted_indices]
+			descriptors = corners_norm[corner_coords[sorted_indices, 0], corner_coords[sorted_indices, 1]].reshape(-1, 1)
+		else:
+			descriptors = None
+		
+		return keypoints, descriptors
+
+
 @dataclass(frozen=True)
 class FeatureResult:
 	"""Container for keypoints and descriptors."""
@@ -66,6 +137,16 @@ def get_detector(
 		}
 		default_params.update(params)
 		return cv2.SIFT_create(**default_params)
+
+	if name_lower == "harris":
+		default_params = {
+			"blockSize": 2,
+			"ksize": 3,
+			"k": 0.04,
+			"threshold": 0.01,
+		}
+		default_params.update(params)
+		return _HarrisDetector(**default_params)  # type: ignore[return-value]
 
 	raise ValueError(f"Unsupported detector: {name}")
 

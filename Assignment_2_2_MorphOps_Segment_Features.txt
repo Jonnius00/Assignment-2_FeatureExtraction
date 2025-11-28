@@ -7,7 +7,7 @@ Create an GUI application where
 is used to detect region of interests. 
 
 Give the user possibilities for interaction 
-and include all morphological operations discussed in the lecture 
+and include all morphological operations discussed in the lecture ( erosion, dilation, opening, closing, gradient ) 
 and at least 2 different features detectors to SIFT. 
 
 The GUI should be able to visualize the results. 

@@ -73,7 +73,7 @@ Assignment 2_FeatureExtraction/
 │  ├─ preprocessing.py     # Normalization, smoothing, difference frames
 │  ├─ morphology.py        # Binarization, erosion, dilation, opening, closing, gradient
 │  ├─ segmentation.py      # Otsu thresholding, contour detection, ROI extraction
-│  ├─ feature_extraction.py# ORB & SIFT detector wrappers
+│  ├─ feature_extraction.py# ORB, SIFT, & Harris detector wrappers
 │  ├─ feature_matching.py  # Descriptor matching & summary statistics
 │  └─ visualization.py     # Histograms, overlays, match drawing, contour visualization
 ├─ tests/                  # pytest suite for each module
@@ -121,12 +121,16 @@ Assignment 2_FeatureExtraction/
    - Displays processing times for performance evaluation.
 
 8. **Tab 3: Feature Extraction Tab**
-   - Detects feature detector from sidebar (ORB or SIFT).
+   - Detects feature detector from sidebar (ORB, SIFT, or Harris).
    - Calls `feature_extraction.extract_features` with selected detector.
    - Converts to grayscale, runs `detectAndCompute`, returns keypoints/descriptors.
    - `visualization.draw_keypoints` overlays results on image.
    - Displays keypoint count, descriptor dimensionality, and processing time.
    - Warning appears if no keypoints are found.
+   - **Harris Corner Detector Notes:**
+     - Returns corner strength response values as descriptors (1D).
+     - Better for detecting sharp corners and edges in medical images.
+     - Fastest of the three detectors; useful for real-time analysis.
 
 9. **Tab 4: Differential Comparison Tab** (requires at least two images)
    - User selects secondary image from dropdown.
@@ -239,7 +243,7 @@ Run `pytest` from the project root to execute the full test suite. Tests are org
 | `preprocessing` | `test_preprocessing.py` | Normalization, smoothing, difference computation |
 | `morphology` | `test_morphology.py` | Binarization methods, erosion/dilation, kernel creation |
 | `segmentation` | `test_segmentation.py` | Otsu thresholding, contour detection, area filtering |
-| `feature_extraction` | `test_feature_extraction.py` | ORB/SIFT feature detection, descriptor extraction |
+| `feature_extraction` | `test_feature_extraction.py` | ORB, SIFT, & Harris feature detection, descriptor extraction |
 | `feature_matching` | `test_feature_matching.py` | Descriptor matching, ratio filtering, statistics |
 
 ### Test Execution Tips
@@ -275,7 +279,7 @@ pytest tests/test_morphology.py::test_binarize_otsu -v
 | `src/preprocessing.py` | `normalize_intensity`, `apply_smoothing`, `compute_difference` | Optionally executed before feature extraction; ensures consistent image ranges. |
 | `src/morphology.py` | `binarize`, `erode`, `dilate`, `opening`, `closing`, `gradient`, `apply_morphology`, `get_structuring_element` | Binary image transformations for noise reduction and edge enhancement; configurable kernels. |
 | `src/segmentation.py` | `otsu_threshold`, `find_contours`, `filter_contours_by_area`, `get_contour_bounding_boxes` | ROI boundary detection and area-based filtering; returns `ContourInfo` dataclass with metrics. |
-| `src/feature_extraction.py` | `get_detector`, `extract_features` | Returns `FeatureResult` dataclass with keypoints, descriptors, and metadata. Supports ORB & SIFT. |
+| `src/feature_extraction.py` | `get_detector`, `extract_features` | Returns `FeatureResult` dataclass with keypoints, descriptors, and metadata. Supports ORB, SIFT, & Harris. |
 | `src/feature_matching.py` | `match_descriptors`, `filter_matches_ratio`, `summarize_matches` | Descriptor matching with BFMatcher; ratio test filtering; safe for empty inputs. |
 | `src/visualization.py` | `to_rgb`, `plot_histogram`, `draw_keypoints`, `draw_matches`, `draw_contours` | Converts OpenCV outputs into Streamlit-friendly RGB visuals; handles overlays and overlaid text. |
 
@@ -401,7 +405,7 @@ This section maps the official assignment requirements to the implementation:
 | GUI application | ✅ Streamlit web interface with 6 tabs | `src/main.py`, `src/ui.py` |
 | Morphological operations | ✅ Binarization, erosion, dilation, opening, closing, gradient | `src/morphology.py` |
 | Segmentation algorithms | ✅ Otsu thresholding + contour detection | `src/segmentation.py` |
-| Feature extraction | ✅ ORB (existing) + SIFT (new) | `src/feature_extraction.py` |
+| Feature extraction | ✅ ORB + SIFT + Harris detectors | `src/feature_extraction.py` |
 | Feature matching | ✅ Descriptor matching with ratio test | `src/feature_matching.py` |
 | ROI detection | ✅ Contours extracted in Segmentation tab | `src/segmentation.py`, `src/visualization.py` |
 

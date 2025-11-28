@@ -29,11 +29,21 @@ class SIFTSettings:
 
 
 @dataclass(frozen=True)
+class HarrisSettings:
+	"""Harris corner detector parameters."""
+	block_size: int       # 2-10
+	ksize: int            # 3-7 (Sobel kernel size, must be odd)
+	k: float              # 0.01-0.1 (corner response weight)
+	threshold: float      # 0.001-0.1 (corner strength threshold)
+
+
+@dataclass(frozen=True)
 class DetectorSettings:
 	"""Combined detector settings with detector type selection."""
-	detector_type: str  # "orb" or "sift"
+	detector_type: str  # "orb", "sift", or "harris"
 	orb: ORBSettings
 	sift: SIFTSettings
+	harris: HarrisSettings
 
 
 @dataclass(frozen=True)
@@ -121,7 +131,7 @@ def render_sidebar() -> tuple[DetectorSettings, PreprocessingSettings, Morpholog
 	st.sidebar.subheader("Feature Detector")
 	
 	# Detector type selection
-	detector_type = st.sidebar.selectbox("Detector Type", ("ORB", "SIFT"))
+	detector_type = st.sidebar.selectbox("Detector Type", ("ORB", "SIFT", "Harris"))
 	
 	# ORB parameters (always collected, shown only when ORB selected)
 	if detector_type == "ORB":
@@ -133,7 +143,7 @@ def render_sidebar() -> tuple[DetectorSettings, PreprocessingSettings, Morpholog
 		orb_fast_threshold = st.sidebar.slider("FAST threshold", min_value=0, max_value=50, value=20, key="orb_fast")
 		orb_patch_size = st.sidebar.slider("Patch size", min_value=15, max_value=64, value=31, step=2, key="orb_patch")
 	else:
-		# Default ORB values when SIFT is selected
+		# Default ORB values when SIFT or Harris is selected
 		orb_nfeatures, orb_scale_factor, orb_nlevels = 750, 1.2, 8
 		orb_edge_threshold, orb_fast_threshold, orb_patch_size = 31, 20, 31
 	
@@ -155,7 +165,7 @@ def render_sidebar() -> tuple[DetectorSettings, PreprocessingSettings, Morpholog
 		sift_edge_threshold = st.sidebar.slider("Edge threshold", min_value=5.0, max_value=20.0, value=10.0, step=1.0, key="sift_edge")
 		sift_sigma = st.sidebar.slider("Sigma", min_value=0.5, max_value=3.0, value=1.6, step=0.1, key="sift_sigma")
 	else:
-		# Default SIFT values when ORB is selected
+		# Default SIFT values when ORB or Harris is selected
 		sift_nfeatures, sift_n_octave_layers = 0, 3
 		sift_contrast_threshold, sift_edge_threshold, sift_sigma = 0.04, 10.0, 1.6
 	
@@ -167,10 +177,29 @@ def render_sidebar() -> tuple[DetectorSettings, PreprocessingSettings, Morpholog
 		sigma=sift_sigma,
 	)
 	
+	# Harris parameters (shown only when Harris selected)
+	if detector_type == "Harris":
+		st.sidebar.markdown("**Harris Parameters**")
+		harris_block_size = st.sidebar.slider("Block Size", min_value=2, max_value=10, value=2, key="harris_block")
+		harris_ksize = st.sidebar.selectbox("Sobel Kernel Size", (3, 5, 7), key="harris_ksize")  # must be odd
+		harris_k = st.sidebar.slider("Harris k Parameter", min_value=0.01, max_value=0.1, value=0.04, step=0.01, key="harris_k")
+		harris_threshold = st.sidebar.slider("Corner Threshold", min_value=0.001, max_value=0.1, value=0.01, step=0.001, key="harris_threshold")
+	else:
+		# Default Harris values when Harris not selected
+		harris_block_size, harris_ksize, harris_k, harris_threshold = 2, 3, 0.04, 0.01
+	
+	harris_settings = HarrisSettings(
+		block_size=harris_block_size,
+		ksize=harris_ksize,
+		k=harris_k,
+		threshold=harris_threshold,
+	)
+	
 	detector_settings = DetectorSettings(
 		detector_type=detector_type.lower(),
 		orb=orb_settings,
 		sift=sift_settings,
+		harris=harris_settings,
 	)
 
 	st.sidebar.subheader("Matching")

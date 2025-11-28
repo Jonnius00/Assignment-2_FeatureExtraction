@@ -91,7 +91,7 @@ def _extract_features(image: np.ndarray, settings: ui.DetectorSettings) -> featu
 			fastThreshold=settings.orb.fast_threshold,
 			patchSize=settings.orb.patch_size,
 		)
-	else:  # sift
+	elif settings.detector_type == "sift":
 		detector = feature_extraction.get_detector("sift",
 			nfeatures=settings.sift.nfeatures,
 			nOctaveLayers=settings.sift.n_octave_layers,
@@ -99,6 +99,15 @@ def _extract_features(image: np.ndarray, settings: ui.DetectorSettings) -> featu
 			edgeThreshold=settings.sift.edge_threshold,
 			sigma=settings.sift.sigma,
 		)
+	elif settings.detector_type == "harris":
+		detector = feature_extraction.get_detector("harris",
+			blockSize=settings.harris.block_size,
+			ksize=settings.harris.ksize,
+			k=settings.harris.k,
+			threshold=settings.harris.threshold,
+		)
+	else:
+		raise ValueError(f"Unknown detector type: {settings.detector_type}")
 	return feature_extraction.extract_features(image, detector)
 
 
