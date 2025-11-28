@@ -66,20 +66,21 @@ After all imports, `main()` configures the Streamlit page, draws the sidebar wit
 
 ```
 Assignment 2_FeatureExtraction/
+├─ docs/                   # Documentation
+│  ├─ developer_manual.md  # this document
 ├─ src/
 │  ├─ main.py              # Streamlit entry point & tab orchestration
 │  ├─ ui.py                # Sidebar controls + metadata display helpers
 │  ├─ image_io.py          # PNG decoding, validation, color conversion
 │  ├─ preprocessing.py     # Normalization, smoothing, difference frames
-│  ├─ morphology.py        # Binarization, erosion, dilation, opening, closing, gradient
+│  ├─ morphology.py        # Binarise, erosion, dilation, open, close, gradient
 │  ├─ segmentation.py      # Otsu thresholding, contour detection, ROI extraction
-│  ├─ feature_extraction.py# ORB, SIFT, & Harris detector wrappers
+│  ├─ feature_extraction.py # ORB, SIFT, & Harris detector wrappers
 │  ├─ feature_matching.py  # Descriptor matching & summary statistics
-│  └─ visualization.py     # Histograms, overlays, match drawing, contour visualization
+│  └─ visualization.py     # Histograms, overlays, matches and contour drawing
 ├─ tests/                  # pytest suite for each module
-├─ requirements.txt        # dependency list (includes opencv-contrib-python for SIFT)
+├─ requirements.txt        # dependency list (includes opencv-contrib-python)
 ├─ README.md               # setup & usage instructions
-└─ developer_manual.md     # this document
 ```
 
 ## 3. Execution Walkthrough (Step-by-Step)
